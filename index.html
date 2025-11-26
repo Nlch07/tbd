@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Синхронизация цвета фона</title>
-    
-    <!-- Подключаем Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
     <style>
         body {
             margin: 0;
@@ -98,36 +93,40 @@
 </head>
 <body>
     <h1>Синхронизация цвета фона между устройствами</h1>
+    
     <div class="button-container">
-        <button class="color-button" onclick="changeBackground('red')">Сделать фон красным</button>
-        <button class="color-button" onclick="changeBackground('blue')">Сделать фон синим</button>
-        <button class="color-button" onclick="changeBackground('green')">Сделать фон зеленым</button>
-        <button class="color-button" onclick="changeBackground('purple')">Сделать фон фиолетовым</button>
+        <button class="color-button" onclick="changeBackground('red')">Красный</button>
+        <button class="color-button" onclick="changeBackground('blue')">Синий</button>
+        <button class="color-button" onclick="changeBackground('green')">Зеленый</button>
+        <button class="color-button" onclick="changeBackground('purple')">Фиолетовый</button>
     </div>
-    <button class="reset-button" onclick="resetBackground()">Сбросить фон (белый)</button>
+    
+    <button class="reset-button" onclick="resetBackground()">Сбросить (белый)</button>
     
     <div id="status" class="status loading">Подключение к облаку...</div>
 
-    <script>
-        // Конфигурация Firebase
+    <script type="module">
+        // Импортируем необходимые модули Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        // Ваша конфигурация Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyB7dS8Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q",
-            authDomain: "background-color-sync.firebaseapp.com",
-            projectId: "background-color-sync",
-            storageBucket: "background-color-sync.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q"
+            apiKey: "AIzaSyDwrKRp5a1eHvXvY1k2CU7pJUw_XhGxm8g",
+            authDomain: "testbd-366b4.firebaseapp.com",
+            projectId: "testbd-366b4",
+            storageBucket: "testbd-366b4.firebasestorage.app",
+            messagingSenderId: "824791896836",
+            appId: "1:824791896836:web:d86e9e82dab3d948897651",
+            measurementId: "G-MYY4WB26B7"
         };
 
-        // Инициализация Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
-            updateStatus('connected', 'Подключено к облаку ✓');
-        } catch (error) {
-            console.error('Ошибка Firebase:', error);
-            updateStatus('error', 'Ошибка подключения к облаку');
-        }
+        // Инициализируем Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Глобальные переменные для функций
+        let dbInstance = db;
 
         // Функция обновления статуса
         function updateStatus(type, message) {
@@ -139,9 +138,9 @@
         // Сохраняем цвет в Firebase
         async function saveColorToCloud(color) {
             try {
-                await db.collection('background').doc('currentColor').set({
+                await setDoc(doc(dbInstance, 'background', 'currentColor'), {
                     color: color,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: new Date()
                 });
                 updateStatus('connected', 'Цвет сохранен в облаке ✓');
             } catch (error) {
@@ -152,18 +151,19 @@
 
         // Слушаем изменения в Firebase
         function listenForColorChanges() {
-            db.collection('background').doc('currentColor')
-                .onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        const color = data.color;
-                        applyBackgroundColor(color);
-                        updateStatus('connected', 'Цвет синхронизирован ✓');
-                    }
-                }, (error) => {
-                    console.error('Ошибка прослушивания:', error);
-                    updateStatus('error', 'Ошибка синхронизации');
-                });
+            const docRef = doc(dbInstance, 'background', 'currentColor');
+            
+            onSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    const color = data.color;
+                    applyBackgroundColor(color);
+                    updateStatus('connected', 'Цвет синхронизирован ✓');
+                }
+            }, (error) => {
+                console.error('Ошибка прослушивания:', error);
+                updateStatus('error', 'Ошибка синхронизации');
+            });
         }
 
         // Применяем цвет фона
@@ -192,14 +192,14 @@
             }
         }
 
-        // Функция смены фона
-        async function changeBackground(color) {
+        // Функция смены фона (делаем глобальной)
+        window.changeBackground = async function(color) {
             applyBackgroundColor(color);
             await saveColorToCloud(color);
         }
 
-        // Функция сброса фона
-        async function resetBackground() {
+        // Функция сброса фона (делаем глобальной)
+        window.resetBackground = async function() {
             applyBackgroundColor('white');
             await saveColorToCloud('white');
         }
@@ -214,17 +214,20 @@
             listenForColorChanges();
             
             // И загружаем текущий цвет из облака
-            db.collection('background').doc('currentColor').get()
+            const docRef = doc(dbInstance, 'background', 'currentColor');
+            getDoc(docRef)
                 .then((doc) => {
-                    if (doc.exists) {
+                    if (doc.exists()) {
                         const cloudColor = doc.data().color;
                         if (cloudColor !== localColor) {
                             applyBackgroundColor(cloudColor);
                         }
                     }
+                    updateStatus('connected', 'Подключено к облаку ✓');
                 })
                 .catch((error) => {
                     console.error('Ошибка загрузки из облака:', error);
+                    updateStatus('error', 'Ошибка подключения к облаку');
                 });
         });
     </script>
