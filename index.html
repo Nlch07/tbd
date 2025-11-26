@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Синхронизация цвета фона</title>
+    
+    <!-- Подключаем Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: white;
+            transition: background-color 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .color-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .color-button:active {
+            transform: translateY(0);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .reset-button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .reset-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .loading {
+            color: #666;
+        }
+
+        .connected {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Синхронизация цвета фона между устройствами</h1>
+    <div class="button-container">
+        <button class="color-button" onclick="changeBackground('red')">Сделать фон красным</button>
+        <button class="color-button" onclick="changeBackground('blue')">Сделать фон синим</button>
+        <button class="color-button" onclick="changeBackground('green')">Сделать фон зеленым</button>
+        <button class="color-button" onclick="changeBackground('purple')">Сделать фон фиолетовым</button>
+    </div>
+    <button class="reset-button" onclick="resetBackground()">Сбросить фон (белый)</button>
+    
+    <div id="status" class="status loading">Подключение к облаку...</div>
+
+    <script>
+        // Конфигурация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB7dS8Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q",
+            authDomain: "background-color-sync.firebaseapp.com",
+            projectId: "background-color-sync",
+            storageBucket: "background-color-sync.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q7Q"
+        };
+
+        // Инициализация Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            updateStatus('connected', 'Подключено к облаку ✓');
+        } catch (error) {
+            console.error('Ошибка Firebase:', error);
+            updateStatus('error', 'Ошибка подключения к облаку');
+        }
+
+        // Функция обновления статуса
+        function updateStatus(type, message) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+
+        // Сохраняем цвет в Firebase
+        async function saveColorToCloud(color) {
+            try {
+                await db.collection('background').doc('currentColor').set({
+                    color: color,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                updateStatus('connected', 'Цвет сохранен в облаке ✓');
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                updateStatus('error', 'Ошибка сохранения в облаке');
+            }
+        }
+
+        // Слушаем изменения в Firebase
+        function listenForColorChanges() {
+            db.collection('background').doc('currentColor')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const color = data.color;
+                        applyBackgroundColor(color);
+                        updateStatus('connected', 'Цвет синхронизирован ✓');
+                    }
+                }, (error) => {
+                    console.error('Ошибка прослушивания:', error);
+                    updateStatus('error', 'Ошибка синхронизации');
+                });
+        }
+
+        // Применяем цвет фона
+        function applyBackgroundColor(color) {
+            document.body.style.backgroundColor = color;
+            updateTextColor(color);
+            
+            // Сохраняем локально на случай проблем с интернетом
+            localStorage.setItem('backgroundColor', color);
+        }
+
+        // Обновляем цвет текста для читаемости
+        function updateTextColor(bgColor) {
+            const title = document.querySelector('h1');
+            const status = document.getElementById('status');
+            
+            // Для темных цветов делаем текст белым
+            if (bgColor === 'red' || bgColor === 'blue' || bgColor === 'green' || bgColor === 'purple') {
+                title.style.color = 'white';
+                status.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                status.style.color = 'white';
+            } else {
+                title.style.color = '#333';
+                status.style.backgroundColor = 'rgba(255,255,255,0.8)';
+                status.style.color = '#666';
+            }
+        }
+
+        // Функция смены фона
+        async function changeBackground(color) {
+            applyBackgroundColor(color);
+            await saveColorToCloud(color);
+        }
+
+        // Функция сброса фона
+        async function resetBackground() {
+            applyBackgroundColor('white');
+            await saveColorToCloud('white');
+        }
+
+        // При загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Сначала применяем локальный цвет
+            const localColor = localStorage.getItem('backgroundColor') || 'white';
+            applyBackgroundColor(localColor);
+            
+            // Затем запускаем прослушивание облачных изменений
+            listenForColorChanges();
+            
+            // И загружаем текущий цвет из облака
+            db.collection('background').doc('currentColor').get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const cloudColor = doc.data().color;
+                        if (cloudColor !== localColor) {
+                            applyBackgroundColor(cloudColor);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Ошибка загрузки из облака:', error);
+                });
+        });
+    </script>
+</body>
+</html>
