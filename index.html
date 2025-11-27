@@ -3,232 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Синхронизация цвета фона</title>
+    <title>Общая база данных</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            background-color: white;
-            transition: background-color 0.3s ease;
-            font-family: Arial, sans-serif;
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
-
-        .button-container {
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            justify-content: center;
         }
-
-        .color-button {
-            padding: 15px 30px;
+        input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        button {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
             border: none;
             border-radius: 8px;
-            background-color: white;
-            color: black;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 16px;
+            transition: background 0.3s;
         }
-
-        .color-button:hover {
+        button:hover {
+            background: #5a6fd8;
+        }
+        .refresh-btn {
+            background: #4CAF50;
+        }
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+        .user-card {
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            background: #fafafa;
+            transition: transform 0.2s;
+        }
+        .user-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .color-button:active {
-            transform: translateY(0);
-        }
-
-        h1 {
-            margin-bottom: 30px;
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
             color: #333;
-            text-align: center;
-            padding: 0 20px;
+            margin-bottom: 5px;
         }
-
-        .reset-button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border: none;
-            border-radius: 6px;
-            background-color: #f0f0f0;
-            color: #333;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-bottom: 20px;
-        }
-
-        .reset-button:hover {
-            background-color: #e0e0e0;
-        }
-
-        .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: rgba(255,255,255,0.8);
-            font-size: 14px;
-        }
-
-        .loading {
+        .user-email {
             color: #666;
+            margin-bottom: 8px;
         }
-
-        .connected {
-            color: green;
+        .user-meta {
+            font-size: 12px;
+            color: #888;
         }
-
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
         .error {
-            color: red;
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .stats {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Синхронизация цвета фона между устройствами</h1>
-    
-    <div class="button-container">
-        <button class="color-button" onclick="changeBackground('red')">Красный</button>
-        <button class="color-button" onclick="changeBackground('blue')">Синий</button>
-        <button class="color-button" onclick="changeBackground('green')">Зеленый</button>
-        <button class="color-button" onclick="changeBackground('purple')">Фиолетовый</button>
+    <div class="container">
+        <h1>🌐 Общая база пользователей</h1>
+        <p class="subtitle">Данные синхронизируются между всеми устройствами в реальном времени!</p>
+        
+        <div class="form-group">
+            <input type="text" id="name" placeholder="Введите имя" required>
+            <input type="email" id="email" placeholder="Введите email" required>
+            <button onclick="addUser()">➕ Добавить пользователя</button>
+        </div>
+        
+        <div class="form-group">
+            <button onclick="loadUsers()" class="refresh-btn">🔄 Обновить данные</button>
+            <div style="flex: 1"></div>
+        </div>
+
+        <div id="message"></div>
+        <div id="stats" class="stats"></div>
+        <div id="usersList" class="loading">Загрузка данных...</div>
+        <div id="lastUpdate" class="last-update"></div>
     </div>
-    
-    <button class="reset-button" onclick="resetBackground()">Сбросить (белый)</button>
-    
-    <div id="status" class="status loading">Подключение к облаку...</div>
 
-    <script type="module">
-        // Импортируем необходимые модули Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    <script>
+        // 🔑 ВАШИ РЕАЛЬНЫЕ КЛЮЧИ
+        const BIN_ID = '6928a4a5d0ea881f400434fa';
+        const API_KEY = '$2a$10$HMxMwoPKiOtVWm/jzd1MoeGqMRHVlcqEnIngig1Am1kUTEqGIxXdm';
 
-        // Ваша конфигурация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDwrKRp5a1eHvXvY1k2CU7pJUw_XhGxm8g",
-            authDomain: "testbd-366b4.firebaseapp.com",
-            projectId: "testbd-366b4",
-            storageBucket: "testbd-366b4.firebasestorage.app",
-            messagingSenderId: "824791896836",
-            appId: "1:824791896836:web:d86e9e82dab3d948897651",
-            measurementId: "G-MYY4WB26B7"
-        };
+        let autoRefreshInterval;
 
-        // Инициализируем Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Глобальные переменные для функций
-        let dbInstance = db;
-
-        // Функция обновления статуса
-        function updateStatus(type, message) {
-            const statusElement = document.getElementById('status');
-            statusElement.textContent = message;
-            statusElement.className = `status ${type}`;
+        // Показать сообщение
+        function showMessage(text, type = 'success') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${text}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
         }
 
-        // Сохраняем цвет в Firebase
-        async function saveColorToCloud(color) {
+        // Загрузка данных
+        async function loadUsers() {
             try {
-                await setDoc(doc(dbInstance, 'background', 'currentColor'), {
-                    color: color,
-                    timestamp: new Date()
-                });
-                updateStatus('connected', 'Цвет сохранен в облаке ✓');
-            } catch (error) {
-                console.error('Ошибка сохранения:', error);
-                updateStatus('error', 'Ошибка сохранения в облаке');
-            }
-        }
-
-        // Слушаем изменения в Firebase
-        function listenForColorChanges() {
-            const docRef = doc(dbInstance, 'background', 'currentColor');
-            
-            onSnapshot(docRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    const color = data.color;
-                    applyBackgroundColor(color);
-                    updateStatus('connected', 'Цвет синхронизирован ✓');
-                }
-            }, (error) => {
-                console.error('Ошибка прослушивания:', error);
-                updateStatus('error', 'Ошибка синхронизации');
-            });
-        }
-
-        // Применяем цвет фона
-        function applyBackgroundColor(color) {
-            document.body.style.backgroundColor = color;
-            updateTextColor(color);
-            
-            // Сохраняем локально на случай проблем с интернетом
-            localStorage.setItem('backgroundColor', color);
-        }
-
-        // Обновляем цвет текста для читаемости
-        function updateTextColor(bgColor) {
-            const title = document.querySelector('h1');
-            const status = document.getElementById('status');
-            
-            // Для темных цветов делаем текст белым
-            if (bgColor === 'red' || bgColor === 'blue' || bgColor === 'green' || bgColor === 'purple') {
-                title.style.color = 'white';
-                status.style.backgroundColor = 'rgba(0,0,0,0.7)';
-                status.style.color = 'white';
-            } else {
-                title.style.color = '#333';
-                status.style.backgroundColor = 'rgba(255,255,255,0.8)';
-                status.style.color = '#666';
-            }
-        }
-
-        // Функция смены фона (делаем глобальной)
-        window.changeBackground = async function(color) {
-            applyBackgroundColor(color);
-            await saveColorToCloud(color);
-        }
-
-        // Функция сброса фона (делаем глобальной)
-        window.resetBackground = async function() {
-            applyBackgroundColor('white');
-            await saveColorToCloud('white');
-        }
-
-        // При загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Сначала применяем локальный цвет
-            const localColor = localStorage.getItem('backgroundColor') || 'white';
-            applyBackgroundColor(localColor);
-            
-            // Затем запускаем прослушивание облачных изменений
-            listenForColorChanges();
-            
-            // И загружаем текущий цвет из облака
-            const docRef = doc(dbInstance, 'background', 'currentColor');
-            getDoc(docRef)
-                .then((doc) => {
-                    if (doc.exists()) {
-                        const cloudColor = doc.data().color;
-                        if (cloudColor !== localColor) {
-                            applyBackgroundColor(cloudColor);
-                        }
+                document.getElementById('usersList').innerHTML = '<div class="loading">Загрузка данных...</div>';
+                
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': API_KEY
                     }
-                    updateStatus('connected', 'Подключено к облаку ✓');
-                })
-                .catch((error) => {
-                    console.error('Ошибка загрузки из облака:', error);
-                    updateStatus('error', 'Ошибка подключения к облаку');
                 });
+                
+                if (!response.ok) throw new Error('Ошибка загрузки с сервера');
+                
+                const data = await response.json();
+                const users = data.record.users || [];
+                
+                displayUsers(users);
+                updateLastUpdate();
+                
+            } catch (error) {
+                document.getElementById('usersList').innerHTML = 
+                    `<div class="error">❌ Ошибка загрузки: ${error.message}</div>`;
+                console.error('Ошибка:', error);
+            }
+        }
+
+        // Добавление пользователя
+        async function addUser() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name || !email) {
+                showMessage('⚠️ Заполните все поля', 'error');
+                return;
+            }
+
+            try {
+                // Сначала загружаем текущие данные
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                
+                if (!response.ok) throw new Error('Не удалось загрузить текущие данные');
+                
+                const data = await response.json();
+                const users = data.record.users || [];
+                
+                // Добавляем нового пользователя
+                const newUser = {
+                    id: Date.now(),
+                    name: name,
+                    email: email,
+                    timestamp: new Date().toLocaleString('ru-RU'),
+                    device: navigator.platform || 'Неизвестное устройство',
+                    addedFrom: location.href
+                };
+                
+                users.push(newUser);
+                
+                // Сохраняем обратно
+                const updateResponse = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({ users: users })
+                });
+
+                if (updateResponse.ok) {
+                    document.getElementById('name').value = '';
+                    document.getElementById('email').value = '';
+                    showMessage('✅ Пользователь успешно добавлен!');
+                    loadUsers(); // Обновляем список
+                } else {
+                    throw new Error('Ошибка сохранения данных');
+                }
+                
+            } catch (error) {
+                showMessage(`❌ Ошибка: ${error.message}`, 'error');
+                console.error('Ошибка:', error);
+            }
+        }
+
+        // Отображение пользователей
+        function displayUsers(users) {
+            const usersList = document.getElementById('usersList');
+            const statsDiv = document.getElementById('stats');
+            
+            if (users.length === 0) {
+                usersList.innerHTML = '<div class="loading">📝 База данных пуста. Добавьте первого пользователя!</div>';
+                statsDiv.innerHTML = '<strong>Статистика:</strong> 0 пользователей';
+                return;
+            }
+            
+            // Сортируем по дате (новые сверху)
+            users.sort((a, b) => b.id - a.id);
+            
+            statsDiv.innerHTML = `<strong>Статистика:</strong> ${users.length} пользователей в базе`;
+            
+            usersList.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div class="user-name">👤 ${user.name}</div>
+                    <div class="user-email">📧 ${user.email}</div>
+                    <div class="user-meta">
+                        ⏰ Добавлен: ${user.timestamp}<br>
+                        📱 Устройство: ${user.device}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Обновление времени последнего обновления
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 
+                `Последнее обновление: ${now.toLocaleString('ru-RU')}`;
+        }
+
+        // Автообновление каждые 5 секунд
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(loadUsers, 5000);
+        }
+
+        // Остановка автообновления
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            startAutoRefresh();
+            
+            // Обновляем при возвращении на вкладку
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    loadUsers();
+                }
+            });
+        });
+
+        // Обработка Enter в форме
+        document.getElementById('email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addUser();
+            }
         });
     </script>
 </body>
