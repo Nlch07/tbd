@@ -16,6 +16,80 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Темная тема */
+        body.dark-theme {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        body.dark-theme .container {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .header {
+            background: linear-gradient(135deg, #c44569 0%, #e84118 100%);
+        }
+
+        body.dark-theme .status {
+            background: #2d3436;
+            color: #81ecec;
+            border-bottom-color: #444;
+        }
+
+        body.dark-theme .user-info {
+            background: #2d3436;
+            border-bottom-color: #444;
+        }
+
+        body.dark-theme .user-name-input {
+            background: #1a1a1a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .user-name-input::placeholder {
+            color: #888;
+        }
+
+        body.dark-theme .messages-header {
+            background: #2d3436;
+            border-bottom-color: #444;
+        }
+
+        body.dark-theme .messages {
+            background: #1e272e;
+        }
+
+        body.dark-theme .message.other {
+            background: #2d3436;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .input-container {
+            background: #2d3436;
+            border-top-color: #444;
+        }
+
+        body.dark-theme .message-input {
+            background: #1a1a1a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .message-input::placeholder {
+            color: #888;
+        }
+
+        body.dark-theme .empty-chat {
+            color: #888;
+        }
+
+        body.dark-theme .messages::-webkit-scrollbar-track {
+            background: #2d3436;
         }
 
         .container {
@@ -28,15 +102,17 @@
             height: calc(80vh - 20px);
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
 
-        /* Логотип МАКС - компактный */
+        /* Логотип */
         .header {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
             color: white;
             padding: 15px 20px;
             text-align: center;
             flex-shrink: 0;
+            position: relative;
         }
 
         .logo {
@@ -53,7 +129,27 @@
             font-weight: 300;
         }
 
-        /* Статус бар - компактный */
+        .theme-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Статус бар */
         .status {
             padding: 8px 15px;
             background: #e8f5e8;
@@ -64,6 +160,7 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
         .last-update {
@@ -71,34 +168,75 @@
             opacity: 0.7;
         }
 
-        /* Информация о пользователе - компактная */
+        /* Выбор пользователя */
         .user-info {
-            padding: 10px 15px;
+            padding: 15px;
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-shrink: 0;
-            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .user-setup {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .user-name-input {
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            border-radius: 15px;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
             font-size: 14px;
             flex: 1;
-            max-width: 150px;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .user-name-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .color-selection {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-label {
+            font-size: 0.8em;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .color-option {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+
+        .color-option.selected {
+            border-color: #333;
+            transform: scale(1.1);
         }
 
         .users-online {
             font-size: 0.8em;
             color: #666;
             white-space: nowrap;
+            margin-left: auto;
         }
 
-        /* Панель сообщений - компактная */
+        /* Панель сообщений */
         .messages-header {
             padding: 10px 15px;
             background: #f8f9fa;
@@ -107,6 +245,7 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
         .refresh-btn {
@@ -132,20 +271,24 @@
             cursor: not-allowed;
         }
 
-        /* Сообщения - компактные */
+        /* Сообщения */
         .messages {
             flex: 1;
             padding: 10px;
             overflow-y: auto;
             background: #f8f9fa;
             min-height: 0;
+            transition: all 0.3s ease;
         }
 
         .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
             margin-bottom: 8px;
             padding: 10px;
             border-radius: 12px;
-            max-width: 55%;
+            max-width: 85%;
             position: relative;
             animation: messageAppear 0.3s ease-out;
         }
@@ -159,6 +302,25 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        .message-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .message.own {
@@ -188,7 +350,7 @@
             font-size: 14px;
         }
 
-        /* Форма ввода - компактная */
+        /* Форма ввода */
         .input-container {
             padding: 12px 15px;
             background: white;
@@ -196,6 +358,7 @@
             display: flex;
             gap: 8px;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
         .message-input {
@@ -232,7 +395,7 @@
             transform: translateY(0);
         }
 
-        /* Адаптивность для очень маленьких экранов */
+        /* Адаптивность */
         @media (max-width: 360px) {
             .header {
                 padding: 12px 15px;
@@ -246,14 +409,22 @@
                 font-size: 0.8em;
             }
             
-            .user-info {
+            .user-setup {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
                 text-align: center;
             }
             
             .user-name-input {
                 max-width: 100%;
+            }
+            
+            .color-selection {
+                justify-content: center;
+            }
+            
+            .users-online {
+                margin-left: 0;
             }
             
             .messages-header {
@@ -269,38 +440,17 @@
             .input-container {
                 padding: 10px;
             }
-        }
 
-        /* Пейзажная ориентация */
-        @media (max-height: 500px) {
-            .container {
-                height: 100vh;
-            }
-            
-            .header {
-                padding: 10px 15px;
-            }
-            
-            .logo {
-                font-size: 1.8em;
-                margin-bottom: 2px;
-            }
-            
-            .status, .user-info, .messages-header {
-                padding: 6px 10px;
-            }
-            
-            .messages {
-                padding: 5px;
-            }
-            
-            .message {
-                margin-bottom: 5px;
-                padding: 6px;
+            .theme-toggle {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 8px;
             }
         }
 
-        /* Скроллбар для мобильных */
+        /* Скроллбар */
         .messages::-webkit-scrollbar {
             width: 4px;
         }
@@ -321,39 +471,43 @@
             font-style: italic;
             font-size: 14px;
         }
-
-        /* Улучшения для касаний */
-        @media (hover: none) {
-            .refresh-btn:hover,
-            .send-button:hover {
-                transform: none;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Компактный хедер -->
+        <!-- Хедер -->
         <div class="header">
             <div class="logo">Астик</div>
             <div class="subtitle">Макс иди нахуй</div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
         </div>
 
-        <!-- Компактный статус -->
+        <!-- Статус -->
         <div class="status">
             <span id="statusText">Готов к работе</span>
             <span class="last-update" id="lastUpdate">Обновлено: никогда</span>
         </div>
 
-        <!-- Компактная информация пользователя -->
+        <!-- Выбор пользователя -->
         <div class="user-info">
-            <input type="text" class="user-name-input" id="userName" placeholder="Ваше имя" value="Аноним">
-            <div class="users-online" id="usersOnline">
-                Сообщений: 0
+            <div class="user-setup">
+                <input type="text" class="user-name-input" id="userName" placeholder="Выберите имя" value="Аноним">
+                
+                <div class="color-selection">
+                    <span class="color-label">Цвет:</span>
+                    <div class="color-option selected" style="background: #c1121f;" data-color="#ff6b6b"></div>
+                    <div class="color-option" style="background: #003f88;" data-color="#4ecdc4"></div>
+                    <div class="color-option" style="background: #386641;" data-color="#96ceb4"></div>
+                    <div class="color-option" style="background: #fdc500;" data-color="#feca57"></div>
+                </div>
+                
+                <div class="users-online" id="usersOnline">
+                    Сообщений: 0
+                </div>
             </div>
         </div>
 
-        <!-- Компактная панель сообщений -->
+        <!-- Панель сообщений -->
         <div class="messages-header">
             <h3 style="font-size: 16px;">Сообщения</h3>
             <button class="refresh-btn" onclick="loadMessages()" id="refreshBtn">
@@ -361,14 +515,14 @@
             </button>
         </div>
 
-        <!-- Основная область сообщений -->
+        <!-- Сообщения -->
         <div class="messages" id="messages">
             <div class="empty-chat">
                 Чат пуст. Напишите первое сообщение!
             </div>
         </div>
         
-        <!-- Компактная форма ввода -->
+        <!-- Форма ввода -->
         <div class="input-container">
             <input type="text" class="message-input" id="messageInput" placeholder="Введите сообщение...">
             <button class="send-button" onclick="sendMessage()">Отправить</button>
@@ -382,10 +536,82 @@
 
         let myUserId = generateUserId();
         let isLoading = false;
+        let selectedColor = '#ff6b6b';
 
         // Генерация ID пользователя
         function generateUserId() {
-            return 'user_' + Math.random().toString(36).substr(2, 9);
+            let savedId = localStorage.getItem('chatUserId');
+            if (!savedId) {
+                savedId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('chatUserId', savedId);
+            }
+            return savedId;
+        }
+
+        // Загрузка сохраненных настроек
+        function loadSettings() {
+            // Загрузка имени
+            const savedName = localStorage.getItem('chatUserName');
+            if (savedName) {
+                document.getElementById('userName').value = savedName;
+            }
+
+            // Загрузка цвета
+            const savedColor = localStorage.getItem('userColor');
+            if (savedColor) {
+                selectedColor = savedColor;
+                updateColorSelection(savedColor);
+            }
+
+            // Загрузка темы
+            const savedTheme = localStorage.getItem('chatTheme');
+            if (savedTheme === 'dark') {
+                enableDarkTheme();
+            }
+        }
+
+        // Обновление выбора цвета
+        function updateColorSelection(color) {
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.getAttribute('data-color') === color) {
+                    option.classList.add('selected');
+                }
+            });
+        }
+
+        // Выбор цвета
+        function selectColor(color) {
+            selectedColor = color;
+            localStorage.setItem('userColor', color);
+            updateColorSelection(color);
+        }
+
+        // Темная тема
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-theme')) {
+                enableLightTheme();
+            } else {
+                enableDarkTheme();
+            }
+        }
+
+        function enableDarkTheme() {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeToggle').textContent = '☀️';
+            localStorage.setItem('chatTheme', 'dark');
+        }
+
+        function enableLightTheme() {
+            document.body.classList.remove('dark-theme');
+            document.getElementById('themeToggle').textContent = '🌙';
+            localStorage.setItem('chatTheme', 'light');
+        }
+
+        // Сохранение имени пользователя
+        function saveUserName() {
+            const userName = document.getElementById('userName').value.trim() || 'Аноним';
+            localStorage.setItem('chatUserName', userName);
         }
 
         // Обновление статуса
@@ -393,6 +619,10 @@
             const statusElement = document.getElementById('statusText');
             statusElement.textContent = text;
             statusElement.style.color = isError ? '#d32f2f' : '#2e7d32';
+            
+            if (document.body.classList.contains('dark-theme')) {
+                statusElement.style.color = isError ? '#ff7675' : '#81ecec';
+            }
         }
 
         // Обновление времени последнего обновления
@@ -444,6 +674,9 @@
             const messageText = messageInput.value.trim();
             const userName = userNameInput.value.trim() || 'Аноним';
 
+            // Сохраняем настройки перед отправкой
+            saveUserName();
+
             if (!messageText) {
                 updateStatus('Введите сообщение', true);
                 messageInput.focus();
@@ -467,6 +700,7 @@
                     text: messageText,
                     user: userName,
                     userId: myUserId,
+                    userColor: selectedColor, // Сохраняем цвет пользователя
                     timestamp: Date.now(),
                     time: new Date().toLocaleTimeString('ru-RU', { 
                         hour: '2-digit', 
@@ -477,8 +711,8 @@
                 chatData.messages.push(newMessage);
                 
                 // Ограничиваем количество сообщений
-                if (chatData.messages.length > 100) {
-                    chatData.messages = chatData.messages.slice(-100);
+                if (chatData.messages.length > 20) {
+                    chatData.messages = chatData.messages.slice(-20);
                 }
 
                 // Сохраняем
@@ -526,26 +760,43 @@
                 return;
             }
 
-            // Показываем последние 30 сообщений
-            const recentMessages = messages.slice(-30);
+            // Показываем последние 10 сообщений
+            const recentMessages = messages.slice(-15);
             
             messagesContainer.innerHTML = '';
 
             recentMessages.forEach(message => {
+                const avatarColor = message.userColor || getDefaultColor(message.user);
+                const firstLetter = message.user.charAt(0).toUpperCase();
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${message.userId === myUserId ? 'own' : 'other'}`;
                 messageDiv.innerHTML = `
-                    <div class="message-header">
-                        <strong>${message.user}</strong>
-                        <span>${message.time}</span>
+                    <div class="message-avatar" style="background: ${avatarColor}">
+                        ${firstLetter}
                     </div>
-                    <div class="message-text">${message.text}</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <strong>${message.user}</strong>
+                            <span>${message.time}</span>
+                        </div>
+                        <div class="message-text">${message.text}</div>
+                    </div>
                 `;
                 messagesContainer.appendChild(messageDiv);
             });
 
             // Прокрутка к последнему сообщению
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Функция для получения цвета по умолчанию (для старых сообщений)
+        function getDefaultColor(username) {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
         }
 
         // Обработка нажатия Enter
@@ -555,9 +806,24 @@
             }
         });
 
+        // Сохранение имени при изменении
+        document.getElementById('userName').addEventListener('change', saveUserName);
+        document.getElementById('userName').addEventListener('blur', saveUserName);
+
+        // Обработчики выбора цвета
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                selectColor(this.getAttribute('data-color'));
+            });
+        });
+
+        // Обработчик переключения темы
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            loadMessages();
+            loadSettings(); // Загружаем настройки
+            loadMessages(); // Загружаем сообщения
             updateStatus('Чат загружен');
             
             // Фокус на поле ввода
